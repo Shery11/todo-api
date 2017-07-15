@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var _ = require('underscore');
+
 var PORT = process.env.PORT || 3000;
 
 // no database connected all the data is stored in this variable
@@ -23,16 +25,11 @@ app.get('/todos',function(req,res){
 app.get('/todos/:id',function(req,res){
 	// req.params.id is always a string
 	var todoId =  parseInt(req.params.id,10);
-    var matched; 
-    todo.forEach(function(todo){
-    	
-       if(todo.id === todoId){
-       	 matched = todo;
-       	}
-    });
-
-    if(matched){
-      res.json(matched);
+   
+	var matchedTodo = _.findWhere(todo,{ id : todoId}); 
+	
+	if(matchedTodo){
+      res.json(matchedTodo);
     }else{
     	res.status(404).send();
     }
@@ -43,15 +40,15 @@ app.get('/todos/:id',function(req,res){
 
 app.post('/todo',function(req,res){
   var body = req.body;
+  
+  if( ! _.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0){
+	  return res.status(400).send()
+  }
 
   body.id = todoNextId++;
-   
-  
-   todo.push(body);
-
-
-
+  todo.push(body);
   res.json(body);
+
 });
 
 
