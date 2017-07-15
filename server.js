@@ -1,29 +1,19 @@
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
 var PORT = process.env.PORT || 3000;
 
 // no database connected all the data is stored in this variable
-var todo = [
-	{
-		id : 1,
-		description :'Do lunch',
-		completed : false
-	},
-	{
-		id : 2,
-		description :'Do lunch',
-		completed : false
-	},
-	{
-		id : 3,
-		description :'Do lunch',
-		completed : true
-	}
-];
+var todo = [];
+
+var todoNextId = 1;
 
 app.get('/',function(req,res){
 	res.send('To do api route');
 });
+
+
+app.use(bodyParser.json());
 
 
 app.get('/todos',function(req,res){
@@ -48,6 +38,22 @@ app.get('/todos/:id',function(req,res){
     }
 
 });
+
+// POST /todos/:id
+
+app.post('/todo',function(req,res){
+  var body = req.body;
+
+  body.id = todoNextId++;
+   
+  
+   todo.push(body);
+
+
+
+  res.json(body);
+});
+
 
 app.listen(PORT,function(){
 	console.log('Express listening on port '+ PORT + '!');
