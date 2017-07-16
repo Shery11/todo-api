@@ -39,13 +39,19 @@ app.get('/todos/:id',function(req,res){
 // POST /todos/:id
 
 app.post('/todo',function(req,res){
-  var body = req.body;
+  var body = req.body; 
+
+  body = _.pick(body,'completed', 'description')
   
   if( ! _.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0){
 	  return res.status(400).send()
   }
 
   body.id = todoNextId++;
+  // triming the description
+  body.description = body.description.trim();
+
+  
   todo.push(body);
   res.json(body);
 
